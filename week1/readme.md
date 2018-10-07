@@ -61,3 +61,7 @@ void setup() {
 }
 ```
 *put your answer here*
+A: 3
+B: 0
+C: 3
+
