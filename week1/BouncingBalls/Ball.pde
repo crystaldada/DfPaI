@@ -36,6 +36,7 @@ class Ball {
     }
     if (mousePressed) {
       pos.add(theVel);
+      println(theVel);
       //ellipse(pos.x - theVel, pos.y - theVel, radius, radius);
     }
   }
