@@ -5,7 +5,7 @@ class Triangle {
  
   Triangle(float x, float y) {
     pos = new PVector(x, y);
-    rotation = 0;
+    rotation = 0.0;
   }
 
   void draw() {
@@ -17,8 +17,19 @@ class Triangle {
     triangle(-5, 2, 5, 2, 0, -10);
     popMatrix();
   }
-
+  
+  void rotate(){
+  
+  
+  
+  //translate(width/2, height/2);
+  //float a = atan2(mouseY-height/2, mouseX-width/2);
+  //rotate(a);
+  //rect(-30, -5, 60, 10);
 }
+  }
+
+
 
 ArrayList<Triangle> friends = new ArrayList<Triangle>();
 
@@ -39,5 +50,6 @@ void draw() {
 
   for (Triangle t : friends) {
     t.draw();
+    t.rotate();
   }
 }
