@@ -1,32 +1,56 @@
 class Ball {
+  float x, y;
   PVector pos, vel;
   PVector mouse;
-  //PVector theMouse, thePrevMouse;
   PVector theVel;
-  //float thePrevVel, theVel;
   float radius;
-  //float theEasing = 10;
+  int id=0;
+  color c;
+  Ball[] others;
 
-  Ball(float x, float y, float _radius) {
-    pos = new PVector(x, y);
-    vel = new PVector((random(-3, 3)), (random(-3, 3)));
+  /*constructor*/
+  Ball(float _x, float _y, float _radius, int _id, Ball[] _others) {
     radius = _radius;
-    mouse = new PVector(mouseX, mouseY);
-    //theMouse = new PVector(mouseX, mouseY);
-    //thePrevMouse = new PVector(pmouseX, pmouseY);
-    theVel = new PVector ((mouse.x-pos.x), (mouse.y - pos.y));
-    theVel.normalize();
-    //theVel = new PVector((theMouse.x - thePrevMouse.x) * theEasing, (theMouse.y - thePrevMouse.y) * theEasing);
-    //thePrevVel = theEasing * theMouse.dist(thePrevMouse);
-    //theVel -= (theVel - thePrevVel) / theEasing;
+    id = _id;
+    x = _x;
+    y = _y;
+    others = _others;
+    pos = new PVector(x, y);
+    vel = new PVector((random(-3, 3)), (random(-3, 3))); // gives ball random direction to move
+    c = color(random(255), random(255), random(255), random(255));
   }
 
-  void draw() {
-    ellipse(pos.x, pos.y, radius, radius);
+  /*bounce off each other*/
+  void collide() {
+
+    for (int i = id + 1; i < numBalls; i++) {
+      float dx = others[i].x - x;
+      float dy = others[i].y - y;
+      float distance = sqrt(dx*dx + dy*dy); //get the distance between the two ball's center
+      float minDist = others[i].radius + radius; // calculate how far the centers are when one ball touches another 
+
+      //compare the two numbers to see if two balls meet
+      if (distance < minDist) {
+        float angle = atan2(dy, dx);
+        float targetX = x + cos(angle) * minDist;
+        float targetY = y + sin(angle) * minDist;
+        float ax = (targetX - others[i].x) * spring;
+        float ay = (targetY - others[i].y) * spring;
+        //change the direction of the balls
+        vel.x -= ax;
+        vel.y -= ay;
+        others[i].vel.x += ax;
+        others[i].vel.y += ay;
+      }
+    }
   }
 
+
+  //bounce off the edge
   void update() {
     pos.add(vel);
+    x += vel.x;
+    y += vel.y;
 
     if (pos.x < radius || pos.x > width - radius) {
       vel.x *= -1;
@@ -34,10 +58,25 @@ class Ball {
     if (pos.y < radius || pos.y > height - radius) {
       vel.y *= -1;
     }
+  }
+
+  //follow mouse when you press the cursor 
+  void followMouse() {
+    
+    mouse = new PVector(mouseX, mouseY);
+    theVel = new PVector ((mouse.x - pos.x), (mouse.y - pos.y));
+    theVel.normalize(); // make it a unit vector 
+
     if (mousePressed) {
       pos.add(theVel);
       println(theVel);
-      //ellipse(pos.x - theVel, pos.y - theVel, radius, radius);
     }
+  }
+
+
+  //draw the each ball with a different color
+  void display() {
+    fill(c);
+    ellipse(pos.x, pos.y, radius, radius);
   }
 }

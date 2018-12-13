@@ -7,7 +7,8 @@ void setup() {
  
   oscP5 = new OscP5(this, 9999);
   
-  NetAddress location = new NetAddress("192.168.0.8", 2345);
+  //NetAddress location = new NetAddress("192.168.0.8", 2345);
+  NetAddress location = new NetAddress("127.0.0.1", 2345);
   
   OscMessage message = new OscMessage("/");
   message.add("Will");

@@ -2,6 +2,7 @@ import requests
 from lxml import etree
 import time
 
+# urls for data
 urls = [
     'https://en.wikipedia.org/wiki/List_of_craters_on_the_Moon:_A%E2%80%93B',
     'https://en.wikipedia.org/wiki/List_of_craters_on_the_Moon:_C%E2%80%93F',
@@ -14,27 +15,40 @@ urls = [
 
 parser = etree.HTMLParser()
 
-def get_coords(url):
+# get the coordinates and diameters of mooncraters from the urls
+def get_data(url):
     res = requests.get(url)
 
     tree = etree.fromstring(res.text, parser)
     coords = tree.xpath('//span[@class="geo"]/text()')
+    diameters = tree.xpath('//tbody/tr/td[3]/text()')
+    return coords,diameters
 
-    return coords
-
-
+# make a list for coordinates as they should be in the form of group
+#make another list for diameters
 all_coords = []
+all_diameters = []
+
+# get data of coordinates from all the urls and add them into the lists
 for url in urls:
-    coords = get_coords(url)
+    coords, diameters = get_data(url)
     all_coords += coords
+    all_diameters += diameters
     #  ^ this is the same as all_coords.extend(coords)
 
+# print the data in the list format
     print('added {} coords'.format(len(coords)))
+    print('added {} diameters'.format(len(diameters)))
 
-print('total of {}'.format(len(all_coords)))
+#print the size of the list
+print('total of {} coords and {} diameters'.format(len(all_coords),len(all_diameters)))
 
+i=0 # make a for loop
+# write data into a csv file with three columns
 with open('moon_crater_coords.csv', 'w') as f:
-    f.write('lat,lon\n')
+    f.write('lat,lon,diameters\n')
     for coord in all_coords:
         lat, lon = coord.split('; ')
-        f.write('{},{}\n'.format(lat, lon))
+        diameters = all_diameters[i]
+        f.write('{},{},{}\n'.format(lat, lon, diameters))
+        i+=1 #
